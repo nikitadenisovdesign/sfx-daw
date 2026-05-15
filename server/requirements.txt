@@ -1,0 +1,43 @@
+# Install PyTorch separately with CUDA 12.8 BEFORE this file:
+#   pip install torch==2.11.0 torchaudio --index-url https://download.pytorch.org/whl/cu128
+# Pin setuptools<82 (torch 2.11 build requires it) and numpy<2:
+#   pip install "setuptools<82" wheel "numpy<2"
+# Then:
+#   pip install -r requirements.txt
+
+# AI / inference — both SAO and TangoFlux use diffusers/transformers.
+# We deliberately do NOT install stable-audio-tools: its strict-pinned deps
+# (pytorch_lightning==2.1.0, torchmetrics==0.11.4, sentencepiece==0.1.99, ...)
+# conflict with the rest of the stack. SAO is loaded via diffusers'
+# StableAudioPipeline (available since diffusers 0.27).
+diffusers>=0.30.0
+transformers>=4.44.0
+accelerate>=0.34.0
+safetensors>=0.4.3
+sentencepiece>=0.2.0
+huggingface-hub>=0.24.0
+einops>=0.7.0
+torchsde>=0.2.6   # required by diffusers' CosineDPMSolverMultistepScheduler (SAO)
+
+# Web framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+websockets>=12.0
+python-multipart>=0.0.9
+pydantic>=2.7.0
+pydantic-settings>=2.4.0
+
+# Audio post-processing
+soundfile>=0.12.1
+scipy>=1.13.0
+numpy>=1.26.0
+pydub>=0.25.1
+
+# Storage / utils
+SQLAlchemy>=2.0.30
+aiofiles>=23.2.1
+
+# Dev
+ruff>=0.6.0
+pytest>=8.3.0
+httpx>=0.27.0

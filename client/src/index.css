@@ -1,0 +1,336 @@
+/* === SFX DAW — глобальные стили === */
+
+:root {
+  --bg-0: #0b0b0d;
+  --bg-1: #131318;
+  --bg-2: #1a1a22;
+  --bg-3: #232330;
+  --border: #2a2a36;
+  --border-strong: #3a3a4a;
+  --fg-0: #f4f4f8;
+  --fg-1: #c8c8d4;
+  --fg-2: #8a8a98;
+  --fg-3: #5a5a68;
+
+  --accent: #7c5cff;
+  --accent-2: #5cdfff;
+  --accent-warm: #ff8a4c;
+  --good: #4ade80;
+  --bad: #f87171;
+
+  --track-1: #7c5cff;
+  --track-2: #5cdfff;
+  --track-3: #ff8a4c;
+  --track-4: #4ade80;
+  --track-5: #f472b6;
+  --track-6: #fbbf24;
+  --track-7: #94a3b8;
+  --track-8: #a78bfa;
+
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 4px 20px rgba(0, 0, 0, 0.3);
+
+  --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg-0);
+  color: var(--fg-0);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--bg-2);
+  color: var(--fg-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 80ms, border-color 80ms;
+}
+button:hover:not(:disabled) {
+  background: var(--bg-3);
+  border-color: var(--border-strong);
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+button.primary:hover:not(:disabled) {
+  background: #6a4cff;
+  border-color: #6a4cff;
+}
+button.ghost {
+  background: transparent;
+  border-color: transparent;
+}
+button.ghost:hover:not(:disabled) {
+  background: var(--bg-2);
+}
+button.icon {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--bg-1);
+  color: var(--fg-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  outline: none;
+  width: 100%;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+}
+
+.label {
+  font-size: 11px;
+  color: var(--fg-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-0);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-3);
+  border-radius: 5px;
+  border: 2px solid var(--bg-0);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* === Layout === */
+.app {
+  display: grid;
+  grid-template-rows: 44px 1fr 240px 200px;
+  grid-template-columns: 360px 1fr;
+  grid-template-areas:
+    "transport transport"
+    "generate  video"
+    "generate  timeline"
+    "generate  library";
+  height: 100%;
+  gap: 1px;
+  background: var(--border);
+}
+
+.transport-bar {
+  grid-area: transport;
+  background: var(--bg-1);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 12px;
+}
+
+.video-pane {
+  grid-area: video;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.generate-pane {
+  grid-area: generate;
+  background: var(--bg-1);
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-pane {
+  grid-area: timeline;
+  background: var(--bg-0);
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.library-pane {
+  grid-area: library;
+  background: var(--bg-1);
+  padding: 10px 14px;
+  overflow-y: auto;
+}
+
+.dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  color: var(--fg-2);
+  cursor: pointer;
+  margin: 20px;
+}
+.dropzone.over {
+  border-color: var(--accent);
+  background: rgba(124, 92, 255, 0.05);
+  color: var(--fg-0);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--fg-1);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.variation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.variation-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.variation-card .play-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.variation-card .seed {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-3);
+}
+
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.lib-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+  font-size: 11px;
+  cursor: grab;
+}
+.lib-card:active {
+  cursor: grabbing;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.spacer {
+  flex: 1;
+}
+
+.health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg-3);
+}
+.health-dot.ok {
+  background: var(--good);
+  box-shadow: 0 0 6px var(--good);
+}
+.health-dot.loading {
+  background: var(--accent-warm);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.health-dot.error {
+  background: var(--bad);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
