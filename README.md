@@ -62,6 +62,26 @@ just for offloading inference to a beefier GPU.
 
 ## Quick start
 
+### 0. Get the model weights (~5 GB)
+
+The weights are **not** in the repo (Stability AI Community License + GitHub’s
+100 MB/file limit). The included helper script pulls only the `diffusers`
+files we actually use:
+
+```powershell
+# Windows
+.\scripts\download-models.ps1
+```
+
+```bash
+# Mac / Linux
+bash scripts/download-models.sh
+```
+
+Both require a HuggingFace account that has accepted the SAO license at
+<https://huggingface.co/stabilityai/stable-audio-open-1.0>. Run
+`huggingface-cli login` once with a read token before the first download.
+
 ### 1. Backend (Windows PC with RTX 5090)
 
 ```powershell

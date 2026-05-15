@@ -47,14 +47,20 @@ models/stable-audio-open/
 └── projection_model/
 ```
 
-Easiest way to grab them:
+Easiest way to grab them — use the bundled script from the repo root:
 
 ```powershell
-pip install -U huggingface_hub
-huggingface-cli download stabilityai/stable-audio-open-1.0 `
-  --local-dir ..\models\stable-audio-open `
-  --local-dir-use-symlinks False
+# Windows
+..\scripts\download-models.ps1
 ```
+
+```bash
+# Mac / Linux
+bash ../scripts/download-models.sh
+```
+
+The script only fetches `diffusers`-layout files (~5 GB) and skips the
+SAT-format duplicates the server doesn’t use.
 
 The repo on HF requires accepting the Stability AI Community License — log
 in first with `huggingface-cli login`.
