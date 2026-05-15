@@ -189,6 +189,52 @@ in the HuggingFace `diffusers` layout (`model_index.json` + `scheduler/`,
 - [ ] Phase 6: Polishing, error boundaries, drag-and-drop from desktop,
               automation for track volume/pan, MIDI control
 
+## Deploying the frontend
+
+This app is **two-tier**: a static React bundle (deployable to Vercel / Netlify
+/ Cloudflare Pages) plus a Python+GPU backend (**cannot** live on serverless —
+it needs CUDA, 5 GB of weights on disk, and ≥5 s per request).
+
+### Vercel + Cloudflare Tunnel (recommended for personal use)
+
+The repo ships a [`vercel.json`](vercel.json) that builds from `client/` and
+serves the SPA. To deploy:
+
+1. **Import** this repo at <https://vercel.com/new>. Leave Root Directory as
+   the repo root — `vercel.json` already points the build at `client/`.
+2. **Expose your backend.** On the PC running `python server.py` install and
+   run Cloudflare Tunnel:
+
+   ```powershell
+   winget install --id Cloudflare.cloudflared --silent
+   cloudflared tunnel --url http://localhost:8000
+   ```
+
+   It prints a public `https://*.trycloudflare.com` URL. Free, no account
+   required for ephemeral tunnels. For a stable URL, create a named tunnel
+   under a free Cloudflare Zero Trust account.
+
+3. **Tell the frontend where the backend is.** In the Vercel project,
+   **Settings → Environment Variables → add** `VITE_API_URL` =
+   `https://your-tunnel.trycloudflare.com` for all environments. Redeploy.
+
+That’s it — anyone who opens your `*.vercel.app` URL talks to your local
+RTX 5090.
+
+### Why not put the backend on Vercel itself?
+
+| Backend needs | Vercel offers |
+| --- | --- |
+| PyTorch + CUDA (~4 GB of native deps) | 50 MB compressed function bundle |
+| GPU inference | CPU only, no GPU |
+| 5–20 s per `/generate` | 10 s hobby / 60 s Pro / 300 s Enterprise hard cap |
+| 5 GB of model weights on local disk | Ephemeral filesystem |
+| SQLite cache + generated WAV directory | No persistent storage |
+
+If you need backend in the cloud, look at **Modal**, **Replicate**, **Runpod
+Serverless** or a dedicated GPU VM (Lambda Labs / Vast.ai) — they support
+PyTorch + CUDA and long-running requests. Vercel doesn’t.
+
 ## Licensing notes
 
 **Stable Audio Open 1.0** is released under the
