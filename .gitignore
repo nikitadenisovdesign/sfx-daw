@@ -40,6 +40,9 @@ pnpm-debug.log*
 server/_test_*.wav
 server/pip-install.log
 
+# Cloudflare quick-tunnel logs
+.cloudflared-tunnel.log*
+
 # --- Project artifacts ---
 generated/
 sfx_cache.db
