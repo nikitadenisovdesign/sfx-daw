@@ -1,4 +1,4 @@
-// Экспорт микса и стемов через ExportEngine.
+// Экспорт микса через ExportEngine.
 
 import { useState } from "react";
 import { useProjectStore } from "@/store/projectStore";
@@ -10,12 +10,11 @@ import { audioBufferToWav, downloadBlob } from "@/lib/wav";
 export function useExport(): {
   exporting: boolean;
   exportMix: () => Promise<void>;
-  exportStems: () => Promise<void>;
 } {
   const [exporting, setExporting] = useState(false);
   const { engine } = useAudioEngine();
 
-  const run = async (mode: "mix" | "stems") => {
+  const exportMix = async (): Promise<void> => {
     const project = useProjectStore.getState().project;
     const mixer = useMixerStore.getState();
     const audible = new Set<string>();
@@ -23,8 +22,7 @@ export function useExport(): {
 
     setExporting(true);
     try {
-      const { buffers } = await exportProject(project, {
-        mode,
+      const { buffer } = await exportProject(project, {
         loadBuffer: (url) => engine.cache.load(url),
         audibleTracks: audible,
         trackVolumes: mixer.trackVolumes,
@@ -32,18 +30,12 @@ export function useExport(): {
         masterVolume: mixer.masterVolume,
       });
       const safe = (project.name || "project").replace(/\s+/g, "-");
-      for (const [name, buf] of Object.entries(buffers)) {
-        const blob = audioBufferToWav(buf);
-        downloadBlob(blob, mode === "mix" ? `${safe}_mix.wav` : `${safe}_${name}.wav`);
-      }
+      const blob = audioBufferToWav(buffer);
+      downloadBlob(blob, `${safe}_mix.wav`);
     } finally {
       setExporting(false);
     }
   };
 
-  return {
-    exporting,
-    exportMix: () => run("mix"),
-    exportStems: () => run("stems"),
-  };
+  return { exporting, exportMix };
 }

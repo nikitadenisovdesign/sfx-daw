@@ -14,7 +14,7 @@ export function Transport(): JSX.Element {
   const isPlaying = useUIStore((s) => s.isPlaying);
   const playhead = useUIStore((s) => s.playheadSeconds);
   const { engine } = useAudioEngine();
-  const { exporting, exportMix, exportStems } = useExport();
+  const { exporting, exportMix } = useExport();
   const { save, load } = useProjectIO();
   const { importing: importingAudio, importAudio } = useImportAudio();
   const health = useServerHealth();
@@ -152,7 +152,6 @@ export function Transport(): JSX.Element {
         />
       </label>
       <button onClick={exportMix} disabled={exporting}>⬇ Mix</button>
-      <button onClick={exportStems} disabled={exporting}>⬇ Stems</button>
 
       <div style={{ width: 1, height: 20, background: "var(--border)" }} />
 

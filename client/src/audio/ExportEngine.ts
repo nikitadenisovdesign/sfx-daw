@@ -1,5 +1,5 @@
-// Оффлайн-рендер микса и стемов через OfflineAudioContext.
-// Возвращает AudioBuffer-ы — кодирование в WAV в lib/wav.ts.
+// Оффлайн-рендер микса проекта через OfflineAudioContext.
+// Возвращает один AudioBuffer — кодирование в WAV в lib/wav.ts.
 
 import type { Project, Track } from "@/types";
 
@@ -10,8 +10,6 @@ export interface ExportOptions {
   channels?: number;
   /** Загрузчик AudioBuffer по URL (например, из общего кэша). */
   loadBuffer: (url: string) => Promise<AudioBuffer>;
-  /** Стемы (по треку) или один общий микс. */
-  mode?: "mix" | "stems";
   /** Какие треки слышимы (учитывает mute/solo). Если undefined — все. */
   audibleTracks?: Set<string>;
   /** Громкости/панорамы (override): иначе берём из самих треков. */
@@ -21,8 +19,7 @@ export interface ExportOptions {
 }
 
 export interface ExportResult {
-  /** name → AudioBuffer */
-  buffers: Record<string, AudioBuffer>;
+  buffer: AudioBuffer;
 }
 
 export async function exportProject(project: Project, opts: ExportOptions): Promise<ExportResult> {
@@ -32,23 +29,9 @@ export async function exportProject(project: Project, opts: ExportOptions): Prom
   const length = Math.ceil(duration * sampleRate);
 
   const audible = opts.audibleTracks ?? new Set(project.tracks.map((t) => t.id));
-
-  if ((opts.mode ?? "mix") === "stems") {
-    const out: Record<string, AudioBuffer> = {};
-    for (const t of project.tracks) {
-      if (!audible.has(t.id)) continue;
-      out[`${sanitize(t.name)}_${t.id}`] = await renderToBuffer(
-        [t], length, channels, sampleRate, opts,
-      );
-    }
-    return { buffers: out };
-  }
-
-  const mix = await renderToBuffer(
-    project.tracks.filter((t) => audible.has(t.id)),
-    length, channels, sampleRate, opts,
-  );
-  return { buffers: { mix } };
+  const tracks = project.tracks.filter((t) => audible.has(t.id));
+  const buffer = await renderToBuffer(tracks, length, channels, sampleRate, opts);
+  return { buffer };
 }
 
 function computeDuration(tracks: Track[]): number {
@@ -102,8 +85,4 @@ async function renderToBuffer(
   }
 
   return await ctx.startRendering();
-}
-
-function sanitize(s: string): string {
-  return s.replace(/[^a-z0-9_-]+/gi, "_").toLowerCase();
 }
