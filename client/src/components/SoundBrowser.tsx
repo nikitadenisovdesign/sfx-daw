@@ -70,6 +70,14 @@ export function SoundBrowser(): JSX.Element {
         <button className={favorites ? "primary" : ""} onClick={() => setFavorites(!favorites)}>
           ★ Fav
         </button>
+        <button
+          className="ghost"
+          title="Drop entries whose .wav file is missing on disk"
+          onClick={async () => {
+            const r = await api.cleanupLibrary();
+            if (r.removed > 0) load();
+          }}
+        >🧹</button>
         <button className="ghost" onClick={load}>↻</button>
       </div>
 

@@ -143,6 +143,10 @@ export const api = {
   deleteSound(id: number): Promise<unknown> {
     return request(`/library/${id}`, { method: "DELETE" });
   },
+
+  cleanupLibrary(): Promise<{ ok: boolean; removed: number }> {
+    return request<{ ok: boolean; removed: number }>("/library/cleanup", { method: "POST" });
+  },
 };
 
 export { ApiError };

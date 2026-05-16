@@ -60,6 +60,12 @@ app.add_middleware(
 async def on_startup() -> None:
     db.init_db()
 
+    # Если пользователь удалил файлы из output_dir вручную — почистить запись в БД
+    # чтобы UI не показывал "призраков".
+    removed = db.cleanup_orphans(settings.output_dir)
+    if removed:
+        print(f"[startup] removed {removed} orphan library row(s)")
+
     # Discover and load backends in the background — keeps /health responsive
     # while the model is loading (which can take 10-30s for SAO).
     def _safe_init() -> None:
@@ -297,6 +303,13 @@ async def delete_sound(sound_id: int) -> dict:
     if fp.exists():
         fp.unlink()
     return {"ok": True, "id": sound_id}
+
+
+@app.post("/library/cleanup")
+async def cleanup_library() -> dict:
+    """Drop DB rows whose audio file is missing from disk."""
+    removed = db.cleanup_orphans(settings.output_dir)
+    return {"ok": True, "removed": removed}
 
 
 # === Error handlers ===

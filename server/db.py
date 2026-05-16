@@ -166,6 +166,22 @@ def delete_sound(sound_id: int) -> Optional[str]:
         return row["filename"]
 
 
+def cleanup_orphans(output_dir: Path) -> int:
+    """Remove DB rows whose underlying WAV file is no longer on disk.
+
+    Useful at startup (and via the /library/cleanup endpoint) when files were
+    deleted out-of-band. Returns the number of rows removed.
+    """
+    with connect() as conn:
+        rows = conn.execute("SELECT id, filename FROM sounds").fetchall()
+        missing_ids = [r["id"] for r in rows if not (output_dir / r["filename"]).exists()]
+        if not missing_ids:
+            return 0
+        placeholders = ",".join("?" for _ in missing_ids)
+        conn.execute(f"DELETE FROM sounds WHERE id IN ({placeholders})", missing_ids)
+        return len(missing_ids)
+
+
 def _row_to_dict(row: sqlite3.Row) -> dict:
     d = dict(row)
     d["tags"] = json.loads(d.get("tags") or "[]")
