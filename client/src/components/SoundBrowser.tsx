@@ -119,6 +119,19 @@ export function SoundBrowser(): JSX.Element {
                   load();
                 }}
               >★</button>
+              <button
+                className="ghost icon"
+                style={{ width: 22, height: 22, padding: 0, fontSize: 11 }}
+                title="Delete from library"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  const ok = window.confirm(`Delete "${s.prompt.slice(0, 60)}" from library?`);
+                  if (!ok) return;
+                  if (previewPlayingUrl === itemUrl) engine.stopPreview();
+                  await api.deleteSound(s.id);
+                  load();
+                }}
+              >🗑</button>
               <span className="mono" style={{ color: "var(--fg-3)", fontSize: 10 }}>
                 {s.duration.toFixed(2)}s
               </span>
