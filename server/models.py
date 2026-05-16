@@ -7,8 +7,11 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-# === SFX categories — keep in sync with prompt_templates.py ===
-SFXCategory = Literal["swoosh", "impact", "transition", "ui", "ambient", "pop", "custom"]
+# === SFX category ===
+# Free-form string — the source of truth for valid values is
+# prompt_templates.SFX_TEMPLATES. Using `str` instead of a Literal so the
+# template list can grow without touching this file.
+SFXCategory = str
 
 
 # === Requests ===

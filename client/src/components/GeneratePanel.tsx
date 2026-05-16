@@ -230,7 +230,7 @@ export function GeneratePanel(): JSX.Element {
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 4 }}>
         {templates
           .filter((t) => activeCategory === null || t.category === activeCategory)
-          .slice(0, 6)
+          .slice(0, activeCategory === null ? 12 : 30)
           .map((t) => (
             <button
               key={`${t.category}-${t.variant}`}
