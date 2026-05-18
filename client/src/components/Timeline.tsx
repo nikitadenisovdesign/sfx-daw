@@ -74,22 +74,27 @@ export function Timeline(): JSX.Element {
     urls.forEach((u) => { void ensurePeaks(u); });
   }, [project.tracks, ensurePeaks]);
 
+  // Высота, на которой нужно рисовать все дорожки (включая ниже viewport-а
+  // pane-а — pane скроллится). Растёт когда добавляется новая дорожка.
+  const drawHeight = RULER_HEIGHT + project.tracks.length * view.trackHeight;
+
   // 3) Перерисовка
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const dpr = window.devicePixelRatio ?? 1;
+    const h = Math.max(size.h, drawHeight);
     canvas.width = size.w * dpr;
-    canvas.height = size.h * dpr;
+    canvas.height = h * dpr;
     canvas.style.width = `${size.w}px`;
-    canvas.style.height = `${size.h}px`;
+    canvas.style.height = `${h}px`;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     drawTimeline({
       ctx,
       width: size.w,
-      height: size.h,
+      height: h,
       pixelsPerSecond: view.pixelsPerSecond,
       scrollSeconds: view.scrollSeconds,
       playheadSeconds: view.playheadSeconds,
@@ -100,7 +105,7 @@ export function Timeline(): JSX.Element {
       selectedClipIds: new Set(view.selectedClipIds),
       waveformPeaks: peaks,
     });
-  }, [size, view.pixelsPerSecond, view.scrollSeconds, view.playheadSeconds,
+  }, [size, drawHeight, view.pixelsPerSecond, view.scrollSeconds, view.playheadSeconds,
       view.trackHeight, view.selectedClipIds, project.tracks, project.framerate, peaks]);
 
   // 4) Mouse / wheel handlers
@@ -355,8 +360,6 @@ export function Timeline(): JSX.Element {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const totalHeight = RULER_HEIGHT + project.tracks.length * view.trackHeight;
-
   return (
     <div
       ref={wrapRef}
@@ -375,7 +378,7 @@ export function Timeline(): JSX.Element {
       </div>
 
       <div
-        style={{ position: "relative", overflow: "hidden", minHeight: totalHeight }}
+        style={{ position: "relative", overflow: "hidden", minHeight: drawHeight }}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
