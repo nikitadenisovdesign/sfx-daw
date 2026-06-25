@@ -43,6 +43,12 @@ server/pip-install.log
 # Cloudflare quick-tunnel logs
 .cloudflared-tunnel.log*
 
+# Supervisor runtime state (scripts are tracked, logs/URL are local)
+ops/supervisor.log
+ops/tunnel.err.log
+ops/current-url.txt
+.vercel-login.log*
+
 # --- Project artifacts ---
 generated/
 sfx_cache.db
@@ -75,3 +81,5 @@ models/
 # --- Project state ---
 projects/
 exports/
+
+.vercel

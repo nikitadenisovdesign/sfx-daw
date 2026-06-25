@@ -1,0 +1,33 @@
+# Things Vercel must NOT ship — `.gitignore` is not consulted by `vercel deploy`,
+# so this list has to be explicit. Only the static SPA in client/dist needs to
+# leave this machine.
+
+# Python backend (gigabytes of native deps, no use on a static host)
+server/
+.cloudflared-tunnel.log*
+
+# Model weights — biggest single offender, 4.6 GB files trip Vercel's 2 GiB
+# upload limit.
+models/
+
+# Repo bookkeeping / build artifacts
+.git/
+.github/
+node_modules/
+client/node_modules/
+client/dist/
+
+# Local env + project state
+.env
+.env.local
+client/.env
+client/.env.local
+server/.env
+server/sfx_cache.db*
+server/generated/
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
